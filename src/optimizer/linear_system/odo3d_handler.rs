@@ -19,7 +19,7 @@ use crate::optimizer::linear_system::iso3d_gradients::{
 };
 use nalgebra::storage::Storage;
 use nalgebra::{
-    DMatrix, DVector, Dynamic, Isometry3, Matrix, Matrix3, Matrix6, RowVector6, SliceStorage, SMatrix, Vector, U1, U12,
+    DMatrix, DVector, Dynamic, Isometry3, Matrix, Matrix3, Matrix6, RowVector6, SMatrix, SliceStorage, Vector, U1, U12,
 };
 
 pub fn update_H_b(

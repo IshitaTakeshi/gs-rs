@@ -17,8 +17,8 @@ use crate::factor_graph::variable::{FixedType, LandmarkVariable3D, VehicleVariab
 use crate::optimizer::linear_system::iso3d_gradients::{get_isometry, skew_trans};
 use nalgebra::storage::Storage;
 use nalgebra::{
-    DMatrix, DVector, Dynamic, Isometry3, Matrix, Matrix3, RowVector3, SliceStorage, SMatrix, Translation3, Vector,
-    Vector3, U1, U9
+    DMatrix, DVector, Dynamic, Isometry3, Matrix, Matrix3, RowVector3, SMatrix, SliceStorage, Translation3, Vector,
+    Vector3, U1, U9,
 };
 
 pub fn update_H_b(
@@ -48,10 +48,7 @@ pub fn update_H_b(
     update_b_subvector(b, &b_updates.index((6.., ..)), &var_j.fixed_type);
 }
 
-fn calc_jacobians(
-    iso_i: &Isometry3<f64>,
-    local_j: &Translation3<f64>,
-) -> (SMatrix<f64, 3, 9>, SMatrix<f64, 9, 3>) {
+fn calc_jacobians(iso_i: &Isometry3<f64>, local_j: &Translation3<f64>) -> (SMatrix<f64, 3, 9>, SMatrix<f64, 9, 3>) {
     let rot_i_inv = iso_i.inverse().rotation.to_rotation_matrix();
     let mut jacobian = SMatrix::<f64, 3, 9>::from_vec(vec![0.0; 27]);
     jacobian.index_mut((.., 0..3)).copy_from(&-Matrix3::<f64>::identity());

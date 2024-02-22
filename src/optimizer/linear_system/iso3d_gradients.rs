@@ -11,7 +11,7 @@
 //
 
 use nalgebra::storage::Storage;
-use nalgebra::{Isometry3, Matrix3, SMatrix, Quaternion, Translation3, UnitQuaternion};
+use nalgebra::{Isometry3, Matrix3, Quaternion, SMatrix, Translation3, UnitQuaternion};
 
 // code copied from g2o for the case [ sin >= 0 && trace > 0 ]
 pub fn calc_dq_dR(matr: &Matrix3<f64>) -> SMatrix<f64, 3, 9> {
