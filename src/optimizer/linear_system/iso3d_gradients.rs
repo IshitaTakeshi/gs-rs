@@ -10,11 +10,11 @@
 // This product includes software developed at TNG Technology Consulting GmbH (https://www.tngtech.com/).
 //
 
-use nalgebra::{Isometry3, Matrix3, MatrixMN, Quaternion, Translation3, UnitQuaternion, U3, U9};
 use nalgebra::storage::Storage;
+use nalgebra::{Isometry3, Matrix3, SMatrix, Quaternion, Translation3, UnitQuaternion};
 
 // code copied from g2o for the case [ sin >= 0 && trace > 0 ]
-pub fn calc_dq_dR(matr: &Matrix3<f64>) -> MatrixMN<f64, U3, U9> {
+pub fn calc_dq_dR(matr: &Matrix3<f64>) -> SMatrix<f64, 3, 9> {
     let m = matr;
     let trace = get(m, 0, 0) + get(m, 1, 1) + get(m, 2, 2);
     let sin = (trace + 1.0).sqrt() * 0.5;
@@ -25,7 +25,7 @@ pub fn calc_dq_dR(matr: &Matrix3<f64>) -> MatrixMN<f64, U3, U9> {
     let b = 0.25 / sin;
 
     #[rustfmt::skip]
-    let res = MatrixMN::<f64, U3, U9>::from_vec(vec![ a1,  a2,  a3,   // transposed matrix is displayed
+    let res = SMatrix::<f64, 3, 9>::from_vec(vec![ a1,  a2,  a3,   // transposed matrix is displayed
                                                     0.0, 0.0,   b,
                                                      0.0,  -b, 0.0,
                                                      0.0, 0.0,  -b,
@@ -48,24 +48,24 @@ pub fn skew_trans(trans: &Translation3<f64>) -> Matrix3<f64> {
     res
 }
 
-pub fn skew_matr_and_mult_parts(matr: &Matrix3<f64>, mult: &Matrix3<f64>) -> MatrixMN<f64, U9, U3> {
+pub fn skew_matr_and_mult_parts(matr: &Matrix3<f64>, mult: &Matrix3<f64>) -> SMatrix<f64, 9, 3> {
     let m = matr;
     let top_part = mult * skew_trans(&Translation3::new(get(m, 0, 0), get(m, 1, 0), get(m, 2, 0)));
     let mid_part = mult * skew_trans(&Translation3::new(get(m, 0, 1), get(m, 1, 1), get(m, 2, 1)));
     let bot_part = mult * skew_trans(&Translation3::new(get(m, 0, 2), get(m, 1, 2), get(m, 2, 2)));
-    let mut ret = MatrixMN::<f64, U9, U3>::from_vec(vec![0.0; 27]);
+    let mut ret = SMatrix::<f64, 9, 3>::from_vec(vec![0.0; 27]);
     ret.index_mut((0..3, ..)).copy_from(&top_part);
     ret.index_mut((3..6, ..)).copy_from(&mid_part);
     ret.index_mut((6..9, ..)).copy_from(&bot_part);
     ret
 }
 
-pub fn skew_matr_T_and_mult_parts(matr: &Matrix3<f64>, mult: &Matrix3<f64>) -> MatrixMN<f64, U9, U3> {
+pub fn skew_matr_T_and_mult_parts(matr: &Matrix3<f64>, mult: &Matrix3<f64>) -> SMatrix<f64, 9, 3> {
     let m = matr;
     let top_part = mult * skew_trans(&Translation3::new(get(m, 0, 0), get(m, 1, 0), get(m, 2, 0))).transpose();
     let mid_part = mult * skew_trans(&Translation3::new(get(m, 0, 1), get(m, 1, 1), get(m, 2, 1))).transpose();
     let bot_part = mult * skew_trans(&Translation3::new(get(m, 0, 2), get(m, 1, 2), get(m, 2, 2))).transpose();
-    let mut ret = MatrixMN::<f64, U9, U3>::from_vec(vec![0.0; 27]);
+    let mut ret = SMatrix::<f64, 9, 3>::from_vec(vec![0.0; 27]);
     ret.index_mut((0..3, ..)).copy_from(&top_part);
     ret.index_mut((3..6, ..)).copy_from(&mid_part);
     ret.index_mut((6..9, ..)).copy_from(&bot_part);
@@ -143,7 +143,7 @@ mod tests {
         let b = 0.25;
 
         #[rustfmt::skip]
-        let expected = MatrixMN::<f64, U3, U9>::from_vec(vec![ a1,  a2,  a3,    // transposed matrix is displayed
+        let expected = SMatrix::<f64, 3, 9>::from_vec(vec![ a1,  a2,  a3,    // transposed matrix is displayed
                                                               0.0, 0.0,   b,
                                                               0.0,  -b, 0.0,
                                                               0.0, 0.0,  -b,
@@ -183,7 +183,7 @@ mod tests {
                                             0.0288425,  0.290726,   0.956372,]),
         );
         #[rustfmt::skip]
-        let expected = MatrixMN::<f64, U9, U3>::from_vec(vec![ 5.23021e-08, 0.0694143, 0.0300711, -0.0694142,  2.85328e-07,   -1.99857, -0.0300695,    1.99857,  2.91287e-07,    // transposed matrix is displayed
+        let expected = SMatrix::<f64, 9, 3>::from_vec(vec![ 5.23021e-08, 0.0694143, 0.0300711, -0.0694142,  2.85328e-07,   -1.99857, -0.0300695,    1.99857,  2.91287e-07,    // transposed matrix is displayed
                                                                3.41719e-07,  0.580168,   1.91338,  -0.580168,  4.58219e-07,  0.0489397,   -1.91338, -0.0489382, -1.44105e-07,
                                                               -1.52217e-06,  -1.91274,  0.581451,    1.91274, -1.52261e-06, -0.0576846,  -0.581452,  0.0576852, -3.31386e-08,]);
         relative_eq_slice(actual.data.as_slice(), expected.data.as_slice(), 1e-5);

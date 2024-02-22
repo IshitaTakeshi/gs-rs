@@ -20,8 +20,8 @@ use crate::optimizer::linear_system::calculate_H_b;
 use crate::optimizer::linear_system::iso3d_gradients::{get_isometry, get_isometry_normalized};
 use crate::optimizer::solver::sparse_cholesky::SparseCholeskySolver;
 use crate::optimizer::solver::Solver;
-use std::f64::consts::PI;
 use nalgebra::storage::Storage;
+use std::f64::consts::PI;
 
 mod linear_system;
 mod solver;

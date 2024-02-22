@@ -10,17 +10,16 @@
 // This product includes software developed at TNG Technology Consulting GmbH (https://www.tngtech.com/).
 //
 
-
 #![allow(non_snake_case)]
 
 use crate::factor_graph::factor::Factor;
 use crate::factor_graph::variable::{FixedType, VehicleVariable2D};
+use nalgebra::storage::Storage;
 use nalgebra::{
     DMatrix, DVector, Dynamic, Matrix, Matrix3, Matrix3x6, Matrix6x3, Rotation2, Rotation3, RowVector3, SliceStorage,
     Vector, Vector2, Vector3, U1, U6,
 };
 use std::f64::consts::PI;
-use nalgebra::storage::Storage;
 
 pub fn update_H_b(
     H: &mut DMatrix<f64>,

@@ -10,17 +10,15 @@
 // This product includes software developed at TNG Technology Consulting GmbH (https://www.tngtech.com/).
 //
 
-
 #![allow(non_snake_case)]
 
 use crate::factor_graph::factor::Factor;
 use crate::factor_graph::variable::{FixedType, VehicleVariable2D};
+use nalgebra::storage::Storage;
 use nalgebra::{
-    ArrayStorage, DMatrix, DVector, Matrix, Matrix3, Rotation2, Rotation3, RowVector3, Vector, Vector2, Vector3, U1, U3,
+    ArrayStorage, DMatrix, DVector, Matrix, Matrix3, Rotation2, Rotation3, RowVector3, Vector, Vector2, Vector3, U3,
 };
 use std::{f64::consts::PI, ops::Range};
-use nalgebra::storage::Storage;
-
 
 pub fn update_H_b(H: &mut DMatrix<f64>, b: &mut DVector<f64>, factor: &Factor, var: &VehicleVariable2D) {
     let range = if let FixedType::NonFixed(range) = &var.fixed_type {
@@ -57,7 +55,7 @@ fn calc_jacobians(rot_m: f64) -> (Matrix3<f64>, Matrix3<f64>) {
 
 fn update_H_submatrix(
     H: &mut DMatrix<f64>,
-    added_matrix: &Matrix<f64, U3, U3, ArrayStorage<f64, { 3 }, { 3 }>>,
+    added_matrix: &Matrix<f64, U3, U3, ArrayStorage<f64, 3, 3>>,
     range: Range<usize>,
 ) {
     let updated_submatrix = &(H.index((range.clone(), range.clone())) + added_matrix);
@@ -66,7 +64,7 @@ fn update_H_submatrix(
 
 fn update_b_subvector(
     b: &mut DVector<f64>,
-    added_vector: &Vector<f64, U3, ArrayStorage<f64, { 3 }, { 1 } >>,
+    added_vector: &Vector<f64, U3, ArrayStorage<f64, 3, 1>>,
     range: Range<usize>,
 ) {
     let updated_subvector = &(b.index((range.clone(), ..)) + added_vector);

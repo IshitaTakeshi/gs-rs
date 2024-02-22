@@ -10,18 +10,16 @@
 // This product includes software developed at TNG Technology Consulting GmbH (https://www.tngtech.com/).
 //
 
-
 #![allow(non_snake_case)]
 
 use crate::factor_graph::factor::Factor;
 use crate::factor_graph::variable::{FixedType, LandmarkVariable3D, VehicleVariable3D};
 use crate::optimizer::linear_system::iso3d_gradients::{get_isometry, skew_trans};
-use nalgebra::{
-    DMatrix, DVector, Dynamic, Isometry3, Matrix, Matrix3, MatrixMN, RowVector3, SliceStorage, Translation3, Vector,
-    Vector3, U1, U3, U9,
-};
 use nalgebra::storage::Storage;
-
+use nalgebra::{
+    DMatrix, DVector, Dynamic, Isometry3, Matrix, Matrix3, RowVector3, SliceStorage, SMatrix, Translation3, Vector,
+    Vector3, U1, U9
+};
 
 pub fn update_H_b(
     H: &mut DMatrix<f64>,
@@ -53,9 +51,9 @@ pub fn update_H_b(
 fn calc_jacobians(
     iso_i: &Isometry3<f64>,
     local_j: &Translation3<f64>,
-) -> (MatrixMN<f64, U3, U9>, MatrixMN<f64, U9, U3>) {
+) -> (SMatrix<f64, 3, 9>, SMatrix<f64, 9, 3>) {
     let rot_i_inv = iso_i.inverse().rotation.to_rotation_matrix();
-    let mut jacobian = MatrixMN::<f64, U3, U9>::from_vec(vec![0.0; 27]);
+    let mut jacobian = SMatrix::<f64, 3, 9>::from_vec(vec![0.0; 27]);
     jacobian.index_mut((.., 0..3)).copy_from(&-Matrix3::<f64>::identity());
     jacobian
         .index_mut((.., 3..6))

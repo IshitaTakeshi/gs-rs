@@ -70,7 +70,7 @@ mod test {
         );
         let x = match solve_output {
             Ok(sol) => sol,
-            Err(str) => panic!(str),
+            Err(str) => panic!("{}", str),
         };
         assert!(relative_eq!(x[0], 9.0, epsilon = 1e-10));
         assert!(relative_eq!(x[1], 12.0, epsilon = 1e-10));
@@ -95,7 +95,7 @@ mod test {
         );
         let x = match solve_output {
             Ok(sol) => sol,
-            Err(str) => panic!(str),
+            Err(str) => panic!("{}", str),
         };
         info!(
             "TEST FAILED! The solver returned {:?} for not positive-definite H = {:?}",
@@ -122,7 +122,7 @@ mod test {
         );
         let x = match solve_output {
             Ok(sol) => sol,
-            Err(str) => panic!(str),
+            Err(str) => panic!("{}", str),
         };
         info!(
             "TEST FAILED! The solver returned {:?} for not symmetric H = {:?}",
@@ -148,7 +148,7 @@ mod test {
         );
         let x = match solve_output {
             Ok(sol) => sol,
-            Err(str) => panic!(str),
+            Err(str) => panic!("{}", str),
         };
         info!(
             "TEST FAILED! The solver returned {:?} for incompatible dimensions: H = {:?}; b = {:?}",
