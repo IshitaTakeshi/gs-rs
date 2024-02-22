@@ -21,9 +21,7 @@ use nalgebra::{
 use std::{f64::consts::PI, ops::Range};
 
 pub fn update_H_b(H: &mut DMatrix<f64>, b: &mut DVector<f64>, factor: &Factor, var: &VehicleVariable2D) {
-    let range = if let FixedType::NonFixed(range) = &var.fixed_type {
-        range
-    } else {
+    let FixedType::NonFixed(range) = &var.fixed_type else {
         return;
     };
 
